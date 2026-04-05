@@ -10,7 +10,7 @@ class DashboardService {
         SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as total_expenses,
         COUNT(*) as total_transactions
       FROM transactions
-      WHERE 1=1
+      WHERE deleted_at IS NULL
     `;
     
     const params = [];
@@ -54,7 +54,7 @@ class DashboardService {
         SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as total_expenses,
         COUNT(*) as count
       FROM transactions
-      WHERE 1=1
+      WHERE deleted_at IS NULL
     `;
     
     const params = [];
@@ -90,7 +90,7 @@ class DashboardService {
         SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as total_expenses,
         COUNT(*) as transaction_count
       FROM transactions
-      WHERE 1=1
+      WHERE deleted_at IS NULL
     `;
     
     const params = [];
@@ -123,7 +123,7 @@ class DashboardService {
       SELECT t.*, u.username
       FROM transactions t
       JOIN users u ON t.user_id = u.id
-      WHERE 1=1
+      WHERE t.deleted_at IS NULL
     `;
     
     const params = [];

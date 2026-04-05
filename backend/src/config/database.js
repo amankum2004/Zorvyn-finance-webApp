@@ -3,10 +3,16 @@ const { open } = require('sqlite');
 const path = require('path');
 
 let dbInstance = null;
+const dbFile =
+  process.env.DB_FILE ||
+  (process.env.NODE_ENV === 'test'
+    ? ':memory:'
+    : path.join(__dirname, '../../finance.db'));
 
 async function initializeDatabase() {
+  if (dbInstance) return dbInstance;
   const db = await open({
-    filename: path.join(__dirname, '../../finance.db'),
+    filename: dbFile,
     driver: sqlite3.Database
   });
 
@@ -42,6 +48,7 @@ async function initializeDatabase() {
       category TEXT NOT NULL,
       date DATE NOT NULL,
       description TEXT,
+      deleted_at DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id)
@@ -53,6 +60,14 @@ async function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category);
     CREATE INDEX IF NOT EXISTS idx_users_role_id ON users(role_id);
   `);
+
+  // Ensure soft-delete column exists for older databases
+  const txColumns = await db.all("PRAGMA table_info(transactions)");
+  const hasDeletedAt = txColumns.some((col) => col.name === 'deleted_at');
+  if (!hasDeletedAt) {
+    await db.exec('ALTER TABLE transactions ADD COLUMN deleted_at DATETIME');
+  }
+  await db.exec('CREATE INDEX IF NOT EXISTS idx_transactions_deleted_at ON transactions(deleted_at)');
 
   // Ensure default roles exist and match expected permissions
   const defaultRoles = [
@@ -99,6 +114,7 @@ async function initializeDatabase() {
     }
   }
 
+  dbInstance = db;
   return db;
 }
 

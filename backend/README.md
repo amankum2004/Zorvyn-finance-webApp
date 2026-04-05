@@ -8,7 +8,10 @@ A clean, role-aware backend for a finance dashboard. It supports user management
 - User management (admin only)
 - Transaction CRUD with filtering + pagination
 - Dashboard analytics (summary, categories, trends, recent activity)
+- Rate limiting on API routes
+- Soft delete for transactions
 - Input validation and consistent error responses
+- OpenAPI / Swagger docs
 - SQLite persistence (local `finance.db`)
 
 ## Roles and Permissions
@@ -58,6 +61,7 @@ npm run dev
 ```
 
 The API will be available at `http://localhost:3000/api` and a health check at `http://localhost:3000/health`.
+Swagger UI: `http://localhost:3000/api/docs`
 
 ## Data Persistence
 SQLite database is stored at `backend/finance.db`.
@@ -109,8 +113,11 @@ Validation errors return 400 with structured field messages.
 Auth errors return 401/403.
 Unexpected errors return 500 with a safe error message.
 
+## Automated Tests
+```bash
+npm test
+```
+
 ## Optional Enhancements (Not Implemented)
-- Rate limiting
-- Soft delete
-- Automated tests
-- OpenAPI/Swagger docs
+- CI workflow for tests
+- Soft delete restore endpoints

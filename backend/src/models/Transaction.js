@@ -16,12 +16,12 @@ class Transaction {
 
   static async findById(id) {
     const db = await getDb();
-    return await db.get('SELECT * FROM transactions WHERE id = ?', [id]);
+    return await db.get('SELECT * FROM transactions WHERE id = ? AND deleted_at IS NULL', [id]);
   }
 
   static async findAll(filters = {}) {
     const db = await getDb();
-    let query = 'SELECT * FROM transactions WHERE 1=1';
+    let query = 'SELECT * FROM transactions WHERE deleted_at IS NULL';
     const params = [];
 
     if (filters.user_id) {
@@ -60,7 +60,7 @@ class Transaction {
     const transactions = await db.all(query, params);
     
     // Get total count for pagination
-    let countQuery = 'SELECT COUNT(*) as total FROM transactions WHERE 1=1';
+    let countQuery = 'SELECT COUNT(*) as total FROM transactions WHERE deleted_at IS NULL';
     const countParams = [];
     // Apply same filters for count
     if (filters.user_id) {
@@ -135,13 +135,13 @@ class Transaction {
 
   static async delete(id) {
     const db = await getDb();
-    await db.run('DELETE FROM transactions WHERE id = ?', [id]);
+    await db.run('UPDATE transactions SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?', [id]);
     return true;
   }
 
   static async deleteByUser(userId) {
     const db = await getDb();
-    await db.run('DELETE FROM transactions WHERE user_id = ?', [userId]);
+    await db.run('UPDATE transactions SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = ?', [userId]);
     return true;
   }
 }

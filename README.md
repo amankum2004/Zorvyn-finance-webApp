@@ -125,6 +125,22 @@ Transactions:
 - Not found returns 404
 - Server errors return 500
 
+**Rate Limiting**
+Basic API rate limiting is enabled (200 requests per 15 minutes per IP) on `/api/*`.
+
+**Soft Delete**
+Transactions are soft-deleted using a `deleted_at` timestamp. Deleted records are hidden from lists and analytics.
+
+**OpenAPI / Swagger**
+Interactive API docs are available at `http://localhost:3000/api/docs`.
+
+**Automated Tests**
+Backend tests use Jest + Supertest. Run:
+```bash
+cd backend
+npm test
+```
+
 **Persistence**
 SQLite database is stored at `backend/finance.db`. Roles are synced on startup so permissions remain correct.
 
@@ -134,7 +150,6 @@ SQLite database is stored at `backend/finance.db`. Roles are synced on startup s
 - Admin accounts are created via the users endpoint
 
 **Optional Enhancements Not Implemented**
-- Rate limiting
-- Soft delete
-- Automated tests
-- OpenAPI/Swagger docs
+- API rate limiting tuning
+- Soft delete restore endpoints
+- CI workflow for tests
