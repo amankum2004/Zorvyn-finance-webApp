@@ -6,7 +6,9 @@ A full-stack finance dashboard with role-based access control, transaction manag
 This repo includes a working backend and frontend with demo data and a documented API. It is suitable for the assessment described in the prompt (backend design, access control, validation, and analytics).
 
 **Tech Stack**
-- Backend: Node.js, Express, SQLite, JWT, bcrypt, express-validator
+- Backend: Node.js, Express, SQLite, JWT, bcrypt, express-validator, express-rate-limit
+- API Docs: swagger-jsdoc, swagger-ui-express
+- Testing: Jest, Supertest
 - Frontend: React, Vite, Tailwind CSS, Axios
 
 **Repo Structure**
@@ -56,6 +58,7 @@ npm run dev
 Frontend: `http://localhost:5173`
 Backend: `http://localhost:3000`
 Health check: `http://localhost:3000/health`
+API docs: `http://localhost:3000/api/docs`
 
 **Demo Accounts**
 These are stored in `backend/finance.db`:
@@ -91,7 +94,7 @@ Transactions:
 - `GET /api/transactions/:id` Get one transaction
 - `POST /api/transactions` Create transaction
 - `PUT /api/transactions/:id` Update transaction
-- `DELETE /api/transactions/:id` Delete transaction
+- `DELETE /api/transactions/:id` Soft delete transaction
 
 Dashboard:
 - `GET /api/dashboard/summary` Totals and net balance
@@ -116,7 +119,7 @@ Roles:
 - `id`, `name`, `permissions`
 
 Transactions:
-- `id`, `user_id`, `amount`, `type`, `category`, `date`, `description`, timestamps
+- `id`, `user_id`, `amount`, `type`, `category`, `date`, `description`, `deleted_at`, timestamps
 
 **Validation and Errors**
 - Validation errors return 400 with field details
@@ -142,7 +145,7 @@ npm test
 ```
 
 **Persistence**
-SQLite database is stored at `backend/finance.db`. Roles are synced on startup so permissions remain correct.
+SQLite database is stored at `backend/finance.db`. Roles are synced on startup so permissions remain correct. You can override the DB location with `DB_FILE`.
 
 **Assumptions**
 - Viewer users cannot access transactions
